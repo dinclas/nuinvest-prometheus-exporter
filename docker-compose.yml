@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - nuinvest
+  flaresolverr:
+    image: andreroggeri/flaresolverr
+  nuinvest:
+    build: .
+    environment:
+      - "SOLVERR_URL=http://flaresolverr:8191/v1"
+      - "NUINVEST_USERNAME=${NUINVEST_USERNAME}"
+      - "NUINVEST_PASSWORD=${NUINVEST_PASSWORD}"
+      - "NUINVEST_DEVICE_ID=${NUINVEST_DEVICE_ID}"
+      - "NUINVEST_EASYTOKEN=${NUINVEST_EASYTOKEN}"
+    depends_on:
+      - flaresolverr
