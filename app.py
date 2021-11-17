@@ -17,14 +17,21 @@ except Exception as e:
 
 
 @app.route('/metrics')
-def metrics():  # put application's code here
+def metrics():
     investments = nu.get_investment_data()
     result = ''
     result += "total_balance {}\n".format(investments['totalBalance'])
 
     for invesment in investments['investments']:
+        if invesment['settlement']:
+            continue
+
+        investment_percentage = invesment['investedCapital'] / investments['totalBalance']
+        investment_roe = (invesment["netValue"] - invesment["investedCapital"]) / invesment["investedCapital"] * 100
+        investment_index = investment_percentage * investment_roe
         result += "invested{{investment=\"{}\"}} {}\n".format(invesment["nickName"], invesment["investedCapital"])
         result += "net_value{{investment=\"{}\"}} {}\n".format(invesment["nickName"], invesment["netValue"])
+        result += "index{{investment=\"{}\"}} {}\n".format(invesment["nickName"], investment_index)
 
     return Response(result, mimetype='text/plain')
 
