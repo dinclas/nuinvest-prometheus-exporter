@@ -10,6 +10,8 @@ services:
       - nuinvest
   flaresolverr:
     image: andreroggeri/flaresolverr
+    ports:
+      - "8191:8191"
   nuinvest:
     build: .
     environment:
